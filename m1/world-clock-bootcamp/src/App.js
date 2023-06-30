@@ -1,7 +1,7 @@
 import React from "react";
 import logo from "./logo.png";
 import "./App.css";
-import WorldClock from "./WolrdClock";
+import WorldClock from "./Components/WolrdClock";
 
 class App extends React.Component {
   constructor() {
@@ -29,24 +29,30 @@ class App extends React.Component {
           <p>
             Edit <code>src/App.js</code> and save to reload.
           </p>
+
+          <div>
+            <form onSubmit={(e) => this.addNewClock(e)}>
+              <label>
+                Insert a new place, Continent/City ~ eg: Europe/London
+              </label>{" "}
+              <br />
+              <input
+                type="text"
+                value={this.state.place}
+                placeholder="Europe/London"
+                onChange={(e) =>
+                  this.setState({
+                    place: e.target.value,
+                  })
+                }
+              />
+              <input type="submit" value="submit" />
+            </form>
+          </div>
+          <div>
+            <WorldClock clocks={this.state.places} />
+          </div>
         </header>
-        <div>
-          <form onSubmit={(e) => this.addNewClock(e)}>
-            <label>Insert a new place EG: Europe/London</label>
-            <input
-              type="text"
-              value={this.state.place}
-              placeholder="Europe/London"
-              onChange={(e) =>
-                this.setState({
-                  place: e.target.value,
-                })
-              }
-            />
-            <input type="submit" value="submit" />
-          </form>
-        </div>
-        <WorldClock clocks={this.state.places} />
       </div>
     );
   }

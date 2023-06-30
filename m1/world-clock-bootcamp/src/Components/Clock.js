@@ -1,5 +1,4 @@
 import React from "react";
-import "./App.css";
 import { Container, Row, Col } from "react-bootstrap";
 
 class Clock extends React.Component {
@@ -21,16 +20,14 @@ class Clock extends React.Component {
   }
   render() {
     return (
-      <div className="App">
-        <Container style={{ width: "50%" }}>
+      <div>
+        <Container fluid>
           <Row>
             <Col>
-              {" "}
               <p>{this.props.timeZone}</p>
             </Col>
             <Col>
-              {" "}
-              <p>
+              <p className="display">
                 {this.state.date.toLocaleString("en-GB", {
                   timeZone: this.props.timeZone,
                 })}
@@ -38,7 +35,6 @@ class Clock extends React.Component {
             </Col>
           </Row>
         </Container>
-        <p></p>
       </div>
     );
   }

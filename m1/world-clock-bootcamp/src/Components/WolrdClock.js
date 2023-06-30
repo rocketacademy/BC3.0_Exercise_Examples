@@ -4,7 +4,7 @@ import React from "react";
 export default class WorldClock extends React.Component {
   render() {
     return (
-      <div className="bg-dark text-white">
+      <div className="text-white">
         {this.props.clocks ? (
           this.props.clocks.map((zone, index) => (
             <Clock key={index} timeZone={`${zone}`} />
