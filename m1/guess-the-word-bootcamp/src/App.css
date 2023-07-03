@@ -17,3 +17,23 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
+img {
+  height: 30vh;
+}
+
+.Image {
+  background-color: #faebd7;
+  color: #07074f;
+  margin: 5px;
+  flex-direction: column;
+}
+
+.Container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.Column {
+  margin: 50px;
+}
