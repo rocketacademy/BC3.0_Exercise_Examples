@@ -134,13 +134,35 @@ class App extends React.Component {
     });
   };
 
+  handleLogout = () => {
+    signOut(auth).then(() => {
+      console.log("signOut");
+      this.setState({
+        isLoggedIn: false,
+        user: {},
+      });
+    });
+  };
+
   likeCurrentPost = (e, post) => {
+    // right now the like is over ridding the previous like
+    const userId = this.state.user.uid;
     const itemToUpdate = databaseRef(
       database,
       DB_MESSAGES_KEY + "/" + post.key
     );
     const updates = {};
-    updates["likes"] = post.val.likes + 1;
+    if (post.val.likes[`${userId}`]) {
+      updates["likes"] = {
+        ...post.val.likes,
+        [`${userId}`]: !post.val.likes[`${userId}`],
+      };
+    } else {
+      updates["likes"] = {
+        ...post.val.likes,
+        [`${userId}`]: true,
+      };
+    }
     return update(itemToUpdate, updates);
   };
 
@@ -149,15 +171,16 @@ class App extends React.Component {
       database,
       DB_MESSAGES_KEY + "/" + post.key
     );
+    const email = this.state.user.email;
     const updates = {};
     if (post.val.comments) {
       updates["comments"] = [
         ...post.val.comments,
-        { comment: this.state.comment, date: `${new Date()}` },
+        { comment: this.state.comment, date: `${new Date()}`, author: email },
       ];
     } else {
       updates["comments"] = [
-        { comment: this.state.comment, date: `${new Date()}` },
+        { comment: this.state.comment, date: `${new Date()}`, author: email },
       ];
     }
 
@@ -185,7 +208,7 @@ class App extends React.Component {
           date: `${new Date()}`,
           url: url,
           title: this.state.title,
-          likes: 0,
+          likes: {},
           comments: [],
           poster: username,
         });
@@ -202,7 +225,7 @@ class App extends React.Component {
   };
 
   render() {
-    // Convert messages in state to message JSX elements to render
+    console.log(this.state.messages); // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
       <li key={message.key}>
         <h3>
@@ -214,7 +237,12 @@ class App extends React.Component {
         <p>{message.val.message}</p>
         <p>{message.val.date}</p>
         <div className="likes">
-          <p>{message.val.likes}</p>
+          <div>
+            {
+              Object.values(message.val.likes).filter((item) => item !== false)
+                .length
+            }
+          </div>
           {this.state.isLoggedIn ? (
             <button>
               <img
@@ -246,7 +274,7 @@ class App extends React.Component {
           {message.val.comments && message.val.comments.length > 0 ? (
             message.val.comments.map((comment, i) => (
               <li key={i}>
-                {comment.comment} - {comment.date}
+                {comment.comment} - {comment.date} - {comment.author}
               </li>
             ))
           ) : (
@@ -265,7 +293,8 @@ class App extends React.Component {
           {/* TODO: Add input field and add text input as messages in Firebase */}
           {this.state.isLoggedIn ? (
             <>
-              {" "}
+              <h5>Welcome back {this.state.user.email}</h5>
+              <button onClick={this.handleLogout}>Log Out</button>
               <div className="formInput">
                 <label>Title:</label>
                 <input
