@@ -2,6 +2,7 @@ import React from "react";
 import { getRandomWord } from "./utils.js";
 import "./App.css";
 
+// import image function so that we can get all images from the images folder
 function importAll(r) {
   let images = {};
   r.keys().forEach((item, index) => {
@@ -10,12 +11,15 @@ function importAll(r) {
   return images;
 }
 
+// get all images from the image folder into the image array.
 const images = importAll(require.context("./images", true, /\.(PNG|png)$/));
 
 class App extends React.Component {
   constructor(props) {
     super(props);
+    // set up initial state of the application
     this.state = {
+      // use the utlity function to generate a randomw word
       currWord: getRandomWord(),
       guessedLetters: [],
       numberOfGuessesLeft: 10,
@@ -27,9 +31,11 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    // bind the enter key so that when users press enter it submits the letter.
     document.addEventListener("keydown", this.keyPressed);
   }
 
+  // function to handle the key press
   keyPressed = (e) => {
     if (this.state.roundFinished === false) {
       if (e.key === "Enter" && this.state.numberOfGuessesLeft > 0) {
@@ -38,9 +44,11 @@ class App extends React.Component {
     }
   };
 
+  // Either show - or the letter of the randomly generated word
   generateWordDisplay = () => {
     const wordDisplay = [];
     for (let letter of this.state.currWord) {
+      // if they have guessed the letter, it should appear otherwise it will be '-'
       if (this.state.guessedLetters.includes(letter)) {
         wordDisplay.push(letter);
       } else {
@@ -50,6 +58,7 @@ class App extends React.Component {
     return wordDisplay.toString();
   };
 
+  // validate if the user has won or not
   checkWin = () => {
     if (
       this.state.currWord
@@ -64,6 +73,7 @@ class App extends React.Component {
     }
   };
 
+  // submit the currently guessed letter
   handleSubmit = (e) => {
     if (this.state.guess.length > 0) {
       this.setState(
@@ -73,6 +83,7 @@ class App extends React.Component {
           guess: "",
         },
         () => {
+          // check to see if the user has lost or won
           this.checkWin();
           if (this.state.numberOfGuessesLeft === 0) {
             this.setState({
@@ -86,6 +97,7 @@ class App extends React.Component {
     }
   };
 
+  // reset game function
   reset = () => {
     this.setState({
       currWord: getRandomWord(),
@@ -106,6 +118,7 @@ class App extends React.Component {
               {this.generateWordDisplay()}
               <div className="Image Container">
                 Guesses Left: {this.state.numberOfGuessesLeft}
+                {/* Show a different image depending on the number of guesses left. */}
                 <img
                   src={images[`hm${10 - this.state.numberOfGuessesLeft}.PNG`]}
                   alt=""

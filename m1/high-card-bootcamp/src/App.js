@@ -20,7 +20,7 @@ class App extends React.Component {
       },
     };
   }
-
+  //  reset game function
   restart = () => {
     this.setState({
       cardDeck: makeShuffledDeck(),
@@ -30,6 +30,7 @@ class App extends React.Component {
     });
   };
 
+  // deal cards function
   dealCards = () => {
     // this.state.cardDeck.pop() modifies this.state.cardDeck array
     if (this.state.cardDeck.length > 0) {
@@ -42,23 +43,27 @@ class App extends React.Component {
           currCards: newCurrCards,
         },
         () => {
+          // check for a winner
           this.winner();
         }
       );
     }
   };
 
+  // assign round winner
   winner = () => {
     if (this.state.currCards[0].rank > this.state.currCards[1].rank) {
       this.setState({ player1Score: this.state.player1Score + 1 });
     } else {
       this.setState({ player2Score: this.state.player2Score + 1 });
     }
+    // if there are no cards left then check the overall winner
     if (this.state.cardDeck.length === 0) {
       this.overallWinner();
     }
   };
 
+  // check overall winner function
   overallWinner = () => {
     if (this.state.player1Score > this.state.player2Score) {
       alert("Player 1 Wins");
@@ -79,14 +84,11 @@ class App extends React.Component {
     }
   };
 
-  componentDidUpdate() {
-    console.log("Current Cards: ", this.state.currCards);
-    console.log("Current Deck: ", this.state.cardDeck);
-  }
-
   render() {
+    // render the current cards onto the page
     const currCardElems = this.state.currCards.map(({ name, suit }, index) => (
       <div key={`${name}-${suit}`}>
+        {/* Use a card component to render each card */}
         <CardComponent name={name} suit={suit} player={index} />
       </div>
     ));
@@ -107,6 +109,7 @@ class App extends React.Component {
             Player 1 Score: {this.state.player1Score} -- Player 2 Score:
             {this.state.player2Score}
           </p>
+          {/* conditional statement to show deal or gameover  */}
           {this.state.cardDeck.length > 0 ? (
             <button onClick={this.dealCards}>Deal</button>
           ) : (

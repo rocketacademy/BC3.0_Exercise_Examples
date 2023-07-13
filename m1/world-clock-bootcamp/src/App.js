@@ -7,14 +7,16 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
+      // state to capture users input
       place: "",
+      // state to contain the current clocks to display
       places: ["Asia/Hong_Kong", "America/Los_Angeles"],
     };
   }
 
+  // method to add an additional place into state while resetting the input
   addNewClock = (e) => {
     e.preventDefault();
-
     this.setState({
       places: this.state.places.concat(this.state.place),
       place: "",
@@ -29,12 +31,12 @@ class App extends React.Component {
           <p>
             Edit <code>src/App.js</code> and save to reload.
           </p>
-
+          {/* Form to capture the users input place */}
           <div>
             <form onSubmit={(e) => this.addNewClock(e)}>
               <label>
                 Insert a new place, Continent/City ~ eg: Europe/London
-              </label>{" "}
+              </label>
               <br />
               <input
                 type="text"
@@ -49,7 +51,9 @@ class App extends React.Component {
               <input type="submit" value="submit" />
             </form>
           </div>
+          {/* Display all of the places as clocks below */}
           <div>
+            {/* Pass in the value of this.state.places as the clocks prop  */}
             <WorldClock clocks={this.state.places} />
           </div>
         </header>
