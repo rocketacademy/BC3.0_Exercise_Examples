@@ -1,0 +1,60 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: #ffffff;
+}
+
+ol {
+  list-style-type: none;
+}
+
+li {
+  border: 2px #fff solid;
+  border-radius: 10px;
+  margin: 20px;
+}
+
+.formInput {
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+}
+
+img {
+  height: 30vh;
+}
+
+.like {
+  height: 1vh;
+}
+
+.likes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.navigation-margin {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  width: 80%;
+  position: fixed;
+  top: 0;
+}
