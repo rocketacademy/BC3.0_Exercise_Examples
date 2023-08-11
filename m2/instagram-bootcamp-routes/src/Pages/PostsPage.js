@@ -3,20 +3,15 @@ import {
   ref as databaseRef,
   onChildChanged,
 } from "firebase/database";
-import { database } from "../firebase";
 import PostComposer from "../Components/PostComposer";
-import Post from "../Components/Post";
+import Posts from "../Components/Posts";
 import { useState, useEffect } from "react";
 
-// Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const DB_MESSAGES_KEY = "messages";
-const STORAGE_IMAGE_KEY = "images";
-
-function Posts(props) {
+function PostsPage(props) {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    const messagesRef = databaseRef(database, DB_MESSAGES_KEY);
+    const messagesRef = databaseRef(props.database, props.DB_MESSAGES_KEY);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
@@ -45,25 +40,26 @@ function Posts(props) {
         <>
           <h5>Welcome back {props.user.email}</h5>
           <PostComposer
-            DB_MESSAGES_KEY={DB_MESSAGES_KEY}
-            STORAGE_IMAGE_KEY={STORAGE_IMAGE_KEY}
+            DB_MESSAGES_KEY={props.DB_MESSAGES_KEY}
+            STORAGE_IMAGE_KEY={props.STORAGE_IMAGE_KEY}
             databaseRef={databaseRef}
-            database={database}
+            database={props.database}
             user={props.user}
           />
         </>
       ) : null}
 
-      <Post
+      <Posts
+        setSinglePost={props.setSinglePost}
         isLoggedIn={props.isLoggedIn}
         messages={messages}
         databaseRef={databaseRef}
-        database={database}
-        DB_MESSAGES_KEY={DB_MESSAGES_KEY}
+        database={props.database}
+        DB_MESSAGES_KEY={props.DB_MESSAGES_KEY}
         user={props.user}
       />
     </div>
   );
 }
 
-export default Posts;
+export default PostsPage;

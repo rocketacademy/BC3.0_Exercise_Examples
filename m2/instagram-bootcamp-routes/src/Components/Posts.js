@@ -2,6 +2,7 @@ import React from "react";
 import thumb from "../Images/thumb.png";
 import { update } from "firebase/database";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Post(props) {
   const [comment, setComment] = useState("");
@@ -51,9 +52,14 @@ export default function Post(props) {
 
   let messageListItems = props.messages.map((message) => (
     <li key={message.key}>
-      <h3>
-        {message.val.title} - {message.val.poster}
-      </h3>
+      <Link
+        to={`/posts/${message.key}`}
+        onClick={() => props.setSinglePost(message)}
+      >
+        <h3>
+          {message.val.title} - {message.val.poster}
+        </h3>
+      </Link>
       {message.val.url ? (
         <img src={message.val.url} alt={message.val.title} />
       ) : null}

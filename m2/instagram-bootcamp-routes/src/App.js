@@ -3,15 +3,23 @@ import Navigation from "./Components/Navigation";
 import LandingPage from "./Pages/LandingPage";
 import Registration from "./Pages/LoginSignup";
 import Chat from "./Pages/Chat";
-import Posts from "./Pages/Posts";
+import PostsPage from "./Pages/PostsPage";
+import Post from "./Pages/SinglePostPage";
 import "./App.css";
 import { onAuthStateChanged } from "firebase/auth";
 import { useState, useEffect } from "react";
-import { auth } from "./firebase";
+import { auth, database } from "./firebase";
+import { ref as databaseRef } from "firebase/database";
 
 function App() {
+  // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
+  const DB_MESSAGES_KEY = "messages";
+  const STORAGE_IMAGE_KEY = "images";
+  const DB_CHAT_KEY = "chat";
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({});
+  const [singlePost, setSinglePost] = useState({});
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -47,10 +55,43 @@ function App() {
               />
             }
           />
-          <Route path="/chat" element={<Chat />} />
+          <Route
+            path="/chat"
+            element={
+              <Chat
+                database={database}
+                DB_CHAT_KEY={DB_CHAT_KEY}
+                user={user}
+                isLoggedIn={isLoggedIn}
+              />
+            }
+          />
           <Route
             path="/posts"
-            element={<Posts user={user} isLoggedIn={isLoggedIn} />}
+            element={
+              <PostsPage
+                database={database}
+                user={user}
+                isLoggedIn={isLoggedIn}
+                DB_MESSAGES_KEY={DB_MESSAGES_KEY}
+                STORAGE_IMAGE_KEY={STORAGE_IMAGE_KEY}
+                setSinglePost={setSinglePost}
+              />
+            }
+          />
+          <Route
+            path="/posts/:id"
+            element={
+              <Post
+                database={database}
+                user={user}
+                isLoggedIn={isLoggedIn}
+                DB_MESSAGES_KEY={DB_MESSAGES_KEY}
+                STORAGE_IMAGE_KEY={STORAGE_IMAGE_KEY}
+                message={singlePost}
+                databaseRef={databaseRef}
+              />
+            }
           />
         </Routes>
       </header>
