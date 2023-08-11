@@ -1,17 +1,33 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { update } from "firebase/database";
 import thumb from "../Images/thumb.png";
 import { useNavigate } from "react-router-dom";
+import { FirebaseContext } from "../App";
+import { useEffect } from "react";
 
 export default function SinglePostsPage(props) {
+  useEffect(() => {
+    const messagesRef = firebase.databaseRef(
+      firebase.database,
+      firebase.DB_MESSAGES_KEY
+    );
+
+    firebase.onChildChanged(messagesRef, (data) => {
+      console.log(data);
+      setMessage({ key: data.key, val: data.val() });
+    });
+  }, []);
+
+  const firebase = useContext(FirebaseContext);
   const navigate = useNavigate();
   const [comment, setComment] = useState("");
+  const [message, setMessage] = useState(props.message);
 
   const likeCurrentPost = (e, post) => {
     const userId = props.user.uid;
-    const itemToUpdate = props.databaseRef(
-      props.database,
-      props.DB_MESSAGES_KEY + "/" + post.key
+    const itemToUpdate = firebase.databaseRef(
+      firebase.database,
+      firebase.DB_MESSAGES_KEY + "/" + post.key
     );
     const updates = {};
     if (!post.val.likes) {
@@ -29,10 +45,11 @@ export default function SinglePostsPage(props) {
   };
 
   const handleAddComment = (e, post) => {
-    const itemToUpdate = props.databaseRef(
-      props.database,
-      props.DB_MESSAGES_KEY + "/" + post.key
+    const itemToUpdate = firebase.databaseRef(
+      firebase.database,
+      firebase.DB_MESSAGES_KEY + "/" + post.key
     );
+    console.log(itemToUpdate);
     const email = props.user.email;
     const updates = {};
     if (post.val.comments) {
@@ -49,8 +66,6 @@ export default function SinglePostsPage(props) {
     setComment("");
     return update(itemToUpdate, updates);
   };
-
-  let message = props.message;
 
   let messageListItems = (
     <li key={message.key}>

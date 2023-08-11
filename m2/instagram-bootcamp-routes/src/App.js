@@ -7,16 +7,17 @@ import PostsPage from "./Pages/PostsPage";
 import Post from "./Pages/SinglePostPage";
 import "./App.css";
 import { onAuthStateChanged } from "firebase/auth";
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext } from "react";
 import { auth, database } from "./firebase";
-import { ref as databaseRef } from "firebase/database";
+import {
+  ref as databaseRef,
+  onChildAdded,
+  onChildChanged,
+} from "firebase/database";
+
+export const FirebaseContext = createContext(null);
 
 function App() {
-  // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-  const DB_MESSAGES_KEY = "messages";
-  const STORAGE_IMAGE_KEY = "images";
-  const DB_CHAT_KEY = "chat";
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({});
   const [singlePost, setSinglePost] = useState({});
@@ -34,66 +35,63 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Navigation
-          isLoggedIn={isLoggedIn}
-          auth={auth}
-          setIsLoggedIn={setIsLoggedIn}
-          setUser={setUser}
-        />
+        <FirebaseContext.Provider
+          value={{
+            DB_MESSAGES_KEY: "messages",
+            STORAGE_IMAGE_KEY: "images",
+            DB_CHAT_KEY: "chat",
+            auth: auth,
+            database: database,
+            databaseRef: databaseRef,
+            onChildAdded: onChildAdded,
+            onChildChanged: onChildChanged,
+          }}
+        >
+          <Navigation
+            isLoggedIn={isLoggedIn}
+            setIsLoggedIn={setIsLoggedIn}
+            setUser={setUser}
+          />
 
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route
-            path="/registration"
-            element={
-              <Registration
-                auth={auth}
-                user={user}
-                setIsLoggedIn={setIsLoggedIn}
-                isLoggedIn={isLoggedIn}
-                setUser={setUser}
-              />
-            }
-          />
-          <Route
-            path="/chat"
-            element={
-              <Chat
-                database={database}
-                DB_CHAT_KEY={DB_CHAT_KEY}
-                user={user}
-                isLoggedIn={isLoggedIn}
-              />
-            }
-          />
-          <Route
-            path="/posts"
-            element={
-              <PostsPage
-                database={database}
-                user={user}
-                isLoggedIn={isLoggedIn}
-                DB_MESSAGES_KEY={DB_MESSAGES_KEY}
-                STORAGE_IMAGE_KEY={STORAGE_IMAGE_KEY}
-                setSinglePost={setSinglePost}
-              />
-            }
-          />
-          <Route
-            path="/posts/:id"
-            element={
-              <Post
-                database={database}
-                user={user}
-                isLoggedIn={isLoggedIn}
-                DB_MESSAGES_KEY={DB_MESSAGES_KEY}
-                STORAGE_IMAGE_KEY={STORAGE_IMAGE_KEY}
-                message={singlePost}
-                databaseRef={databaseRef}
-              />
-            }
-          />
-        </Routes>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route
+              path="/registration"
+              element={
+                <Registration
+                  user={user}
+                  setIsLoggedIn={setIsLoggedIn}
+                  isLoggedIn={isLoggedIn}
+                  setUser={setUser}
+                />
+              }
+            />
+            <Route
+              path="/chat"
+              element={<Chat user={user} isLoggedIn={isLoggedIn} />}
+            />
+            <Route
+              path="/posts"
+              element={
+                <PostsPage
+                  user={user}
+                  isLoggedIn={isLoggedIn}
+                  setSinglePost={setSinglePost}
+                />
+              }
+            />
+            <Route
+              path="/posts/:id"
+              element={
+                <Post
+                  user={user}
+                  isLoggedIn={isLoggedIn}
+                  message={singlePost}
+                />
+              }
+            />
+          </Routes>
+        </FirebaseContext.Provider>
       </header>
     </div>
   );

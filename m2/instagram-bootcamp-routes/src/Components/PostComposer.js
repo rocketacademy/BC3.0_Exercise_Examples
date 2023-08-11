@@ -6,9 +6,11 @@ import {
 } from "firebase/storage";
 import { push, set } from "firebase/database";
 import { storage } from "../firebase";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { FirebaseContext } from "../App";
 
 export default function PostComposer(props) {
+  const firebase = useContext(FirebaseContext);
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [fileInputFile, setfileInputFile] = useState(null);
@@ -16,15 +18,15 @@ export default function PostComposer(props) {
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   const writeData = () => {
-    const messageListRef = props.databaseRef(
-      props.database,
-      props.DB_MESSAGES_KEY
+    const messageListRef = firebase.databaseRef(
+      firebase.database,
+      firebase.DB_MESSAGES_KEY
     );
     const newMessageRef = push(messageListRef);
 
     const storageRefInstance = storageRef(
       storage,
-      props.STORAGE_IMAGE_KEY + fileInputFile.name
+      firebase.STORAGE_IMAGE_KEY + fileInputFile.name
     );
 
     const username = props.user.email;

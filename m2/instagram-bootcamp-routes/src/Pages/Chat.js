@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
+import { useContext } from "react";
+import { FirebaseContext } from "../App";
 
 export default function Chat(props) {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
 
+  const firebase = useContext(FirebaseContext);
+
   useEffect(() => {
-    const messagesRef = ref(props.database, props.DB_CHAT_KEY);
+    const messagesRef = ref(firebase.database, firebase.DB_CHAT_KEY);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
@@ -17,7 +21,7 @@ export default function Chat(props) {
   }, []);
 
   const writeData = () => {
-    const messageListRef = ref(props.database, props.DB_CHAT_KEY);
+    const messageListRef = ref(firebase.database, firebase.DB_CHAT_KEY);
     const newMessageRef = push(messageListRef);
     set(newMessageRef, {
       message: message,

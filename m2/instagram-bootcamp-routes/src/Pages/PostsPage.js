@@ -1,19 +1,19 @@
-import {
-  onChildAdded,
-  ref as databaseRef,
-  onChildChanged,
-} from "firebase/database";
 import PostComposer from "../Components/PostComposer";
 import Posts from "../Components/Posts";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { FirebaseContext } from "../App";
 
 function PostsPage(props) {
+  const firebase = useContext(FirebaseContext);
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    const messagesRef = databaseRef(props.database, props.DB_MESSAGES_KEY);
+    const messagesRef = firebase.databaseRef(
+      firebase.database,
+      firebase.DB_MESSAGES_KEY
+    );
     // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
+    firebase.onChildAdded(messagesRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
       // This part is the most hardests.
       setMessages((prevState) => {
@@ -21,7 +21,7 @@ function PostsPage(props) {
       });
     });
 
-    onChildChanged(messagesRef, (data) => {
+    firebase.onChildChanged(messagesRef, (data) => {
       setMessages((prevState) => {
         let keyToUpdate = data.key;
         const currentMessageList = [...prevState];
@@ -39,13 +39,7 @@ function PostsPage(props) {
       {props.isLoggedIn ? (
         <>
           <h5>Welcome back {props.user.email}</h5>
-          <PostComposer
-            DB_MESSAGES_KEY={props.DB_MESSAGES_KEY}
-            STORAGE_IMAGE_KEY={props.STORAGE_IMAGE_KEY}
-            databaseRef={databaseRef}
-            database={props.database}
-            user={props.user}
-          />
+          <PostComposer user={props.user} />
         </>
       ) : null}
 
@@ -53,9 +47,6 @@ function PostsPage(props) {
         setSinglePost={props.setSinglePost}
         isLoggedIn={props.isLoggedIn}
         messages={messages}
-        databaseRef={databaseRef}
-        database={props.database}
-        DB_MESSAGES_KEY={props.DB_MESSAGES_KEY}
         user={props.user}
       />
     </div>

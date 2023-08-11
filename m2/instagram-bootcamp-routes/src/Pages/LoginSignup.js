@@ -3,34 +3,39 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 import { useNavigate } from "react-router-dom";
 
+import { FirebaseContext } from "../App";
+
 export default function LoginSignup(props) {
+  const firebase = useContext(FirebaseContext);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSignup = () => {
     console.log("signup");
-    createUserWithEmailAndPassword(props.auth, email, password).then((user) => {
-      if (user) {
-        console.log(user);
-        props.setIsLoggedIn(true);
-        props.setUser(user.user);
-      } else {
-        console.log("User not logged in");
+    createUserWithEmailAndPassword(firebase.auth, email, password).then(
+      (user) => {
+        if (user) {
+          console.log(user);
+          props.setIsLoggedIn(true);
+          props.setUser(user.user);
+        } else {
+          console.log("User not logged in");
+        }
+        setEmail("");
+        setPassword("");
+        navigate("/posts");
       }
-      setEmail("");
-      setPassword("");
-      navigate("/posts");
-    });
+    );
   };
 
   const handleLogin = () => {
     console.log("login");
-    signInWithEmailAndPassword(props.auth, email, password).then((user) => {
+    signInWithEmailAndPassword(firebase.auth, email, password).then((user) => {
       if (user) {
         props.setIsLoggedIn(true);
         props.setUser(user.user);

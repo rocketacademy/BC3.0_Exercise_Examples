@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { signOut } from "firebase/auth";
+import { useContext } from "react";
+import { FirebaseContext } from "../App";
 
 export default function Navigation(props) {
+  const firebase = useContext(FirebaseContext);
   const handleLogout = () => {
-    signOut(props.auth).then(() => {
+    signOut(firebase.auth).then(() => {
       props.setIsLoggedIn(false);
       props.setUser({});
     });

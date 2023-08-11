@@ -1,17 +1,19 @@
 import React from "react";
 import thumb from "../Images/thumb.png";
 import { update } from "firebase/database";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
+import { FirebaseContext } from "../App";
 
 export default function Post(props) {
   const [comment, setComment] = useState("");
+  const firebase = useContext(FirebaseContext);
 
   const likeCurrentPost = (e, post) => {
     const userId = props.user.uid;
-    const itemToUpdate = props.databaseRef(
-      props.database,
-      props.DB_MESSAGES_KEY + "/" + post.key
+    const itemToUpdate = firebase.databaseRef(
+      firebase.database,
+      firebase.DB_MESSAGES_KEY + "/" + post.key
     );
     const updates = {};
     if (!post.val.likes) {
@@ -29,9 +31,9 @@ export default function Post(props) {
   };
 
   const handleAddComment = (e, post) => {
-    const itemToUpdate = props.databaseRef(
-      props.database,
-      props.DB_MESSAGES_KEY + "/" + post.key
+    const itemToUpdate = firebase.databaseRef(
+      firebase.database,
+      firebase.DB_MESSAGES_KEY + "/" + post.key
     );
     const email = props.user.email;
     const updates = {};
