@@ -47,7 +47,9 @@ class App extends React.Component {
         messages: [...state.messages, { key: data.key, val: data.val() }],
       }));
 
+      // onAuthStateChanged will return the user information if the user is logged in
       onAuthStateChanged(auth, (user) => {
+        // if the user is logged in then update the current user state and set isLoggedIn to true
         if (user) {
           console.log(user);
           this.setState({
@@ -58,33 +60,39 @@ class App extends React.Component {
       });
     });
 
+    // onChildChanged triggers if a child of the list is altered, it returns the altered childs new state
     onChildChanged(messagesRef, (data) => {
       let keyToUpdate = data.key;
+      // We need to create a new array from the current state to avoid this issue - when you setState, if the object fed to setState is the same as the previous object, the component will not re-render. This applies even if values within the object were changed, meaning state will be updated but what you see on screen will not be updated.
       const currentMessageList = [...this.state.messages];
+      // find the index of the key you need to update
       const index = currentMessageList.findIndex(
         (item) => item.key === keyToUpdate
       );
+      // remove that item from the current messages and then replace it with the altered childs new state
       currentMessageList.splice(index, 1, { key: data.key, val: data.val() });
+      // update the messages state
       this.setState({
         messages: currentMessageList,
       });
     });
   }
 
+  // helper function to alter the input states
   handleChange = (e) => {
     let { name, value } = e.target;
     this.setState({ [name]: value });
   };
 
   handleSignup = () => {
-    console.log("signup");
+    // creates a new user, using the email and password protocol
     createUserWithEmailAndPassword(
       auth,
       this.state.email,
       this.state.password
     ).then((user) => {
+      // after we create a user, we update state to reflect isLoggedIn as true and the new user object
       if (user) {
-        console.log(user);
         this.setState({ isLoggedIn: true, user: user.user });
       } else {
         console.log("User not logged in");
@@ -97,14 +105,14 @@ class App extends React.Component {
   };
 
   handleLogin = () => {
-    console.log("login");
+    // signs in a user, using the email and password protocol
     signInWithEmailAndPassword(
       auth,
       this.state.email,
       this.state.password
     ).then((user) => {
+      // after we signin, we update state to reflect isLoggedIn as true and the new user object
       if (user) {
-        console.log(user);
         this.setState({ isLoggedIn: true, user: user.user });
       } else {
         console.log("User not logged in");
@@ -117,8 +125,9 @@ class App extends React.Component {
   };
 
   handleLogout = () => {
+    // logs a user out
     signOut(auth).then(() => {
-      console.log("signOut");
+      // we update state to reflext isLoggedIn as false and the initial state of the user object
       this.setState({
         isLoggedIn: false,
         user: {},
@@ -134,6 +143,7 @@ class App extends React.Component {
           <p>
             Edit <code>src/App.js</code> and save to reload.
           </p>
+          {/*  when the user is logged in, show their email, a logout button and the post composter, otherwise show them the login form. Users can see the posts at all times.  */}
           {this.state.isLoggedIn ? (
             <>
               <h5>Welcome back {this.state.user.email}</h5>

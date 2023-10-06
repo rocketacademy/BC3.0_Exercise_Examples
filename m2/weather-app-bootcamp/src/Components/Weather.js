@@ -62,6 +62,7 @@ export default class Weather extends React.Component {
       });
   };
 
+  // Go get the data from API's passing in the city
   callAPI = (city) => {
     axios
       .get(

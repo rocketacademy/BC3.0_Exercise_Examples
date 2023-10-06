@@ -1,5 +1,6 @@
 import React from "react";
 
+// Login Signup form, is passed its function handlers as props.
 export default class LoginSignup extends React.Component {
   render() {
     return (

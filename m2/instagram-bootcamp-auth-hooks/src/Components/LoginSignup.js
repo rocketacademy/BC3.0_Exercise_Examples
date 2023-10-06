@@ -5,6 +5,7 @@ import {
 
 import { useState } from "react";
 
+// Hanlde state and firebase login functions from this component as opposed to being passed down as props
 export default function LoginSignup(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

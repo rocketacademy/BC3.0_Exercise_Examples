@@ -20,6 +20,7 @@ const DB_MESSAGES_KEY = "messages";
 const STORAGE_IMAGE_KEY = "images";
 
 function App() {
+  // intialise the state that will be used throughout the application
   const [messages, setMessages] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({});
@@ -35,7 +36,9 @@ function App() {
       });
     });
 
+    // onAuthStateChanged will return the user information if the user is logged in
     onAuthStateChanged(auth, (user) => {
+      // if the user is logged in then update the current user state and set isLoggedIn to true
       if (user) {
         console.log(user);
         setIsLoggedIn(true);
@@ -43,13 +46,18 @@ function App() {
       }
     });
 
+    // onChildChanged triggers if a child of the list is altered, it returns the altered childs new state
     onChildChanged(messagesRef, (data) => {
+      // update the messages state
       setMessages((prevState) => {
         let keyToUpdate = data.key;
+        // We need to create a new array from the current state to avoid this issue - when you setState, if the object fed to setState is the same as the previous object, the component will not re-render. This applies even if values within the object were changed, meaning state will be updated but what you see on screen will not be updated.
         const currentMessageList = [...prevState];
+        // find the index of the key you need to update
         const index = currentMessageList.findIndex(
           (item) => item.key === keyToUpdate
         );
+        // remove that item from the current messages and then replace it with the altered childs new state
         currentMessageList.splice(index, 1, { key: data.key, val: data.val() });
         return currentMessageList;
       });
@@ -57,7 +65,9 @@ function App() {
   }, []);
 
   const handleLogout = () => {
+    // logs a user out
     signOut(auth).then(() => {
+      // we update state to reflext isLoggedIn as false and the initial state of the user object
       setIsLoggedIn(false);
       setUser({});
     });
@@ -70,6 +80,8 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
+        {/*  when the user is logged in, show their email, a logout button and the post composter, otherwise show them the login form. Users can see the posts at all times.  */}
+
         {isLoggedIn ? (
           <>
             <h5>Welcome back {user.email}</h5>

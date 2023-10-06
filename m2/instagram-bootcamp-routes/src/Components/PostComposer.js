@@ -16,14 +16,17 @@ export default function PostComposer(props) {
   const [fileInputFile, setfileInputFile] = useState(null);
   const [fileInputValue, setfileInputValue] = useState("");
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
+  // Write the new message to the firebase realtime database
   const writeData = () => {
+    // Get the list target on firebase we are targetting
     const messageListRef = firebase.databaseRef(
       firebase.database,
       firebase.DB_MESSAGES_KEY
     );
+    // Add the new message into the list and get the reference to that new data
     const newMessageRef = push(messageListRef);
 
+    // Get the storage ref for the image we are going to store
     const storageRefInstance = storageRef(
       storage,
       firebase.STORAGE_IMAGE_KEY + fileInputFile.name
@@ -31,9 +34,11 @@ export default function PostComposer(props) {
 
     const username = props.user.email;
 
+    // Upload the image to firebase storage
     uploadBytes(storageRefInstance, fileInputFile).then(() => {
+      //  When the file has been uploaded use the storage reference to get the url for the uploaded asset
       getDownloadURL(storageRefInstance).then((url) => {
-        console.log(url);
+        // Set this new message into the firebase realtime database
         set(newMessageRef, {
           message: message,
           date: `${new Date()}`,
@@ -48,7 +53,6 @@ export default function PostComposer(props) {
         setfileInputFile(null);
         setfileInputValue("");
         setTitle("");
-        // comment?
       });
     });
   };

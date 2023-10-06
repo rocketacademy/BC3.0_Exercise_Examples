@@ -47,41 +47,54 @@ class App extends React.Component {
       }));
     });
 
+    // onChildChanged triggers if a child of the list is altered, it returns the altered childs new state
     onChildChanged(messagesRef, (data) => {
       let keyToUpdate = data.key;
+      // We need to create a new array from the current state to avoid this issue - when you setState, if the object fed to setState is the same as the previous object, the component will not re-render. This applies even if values within the object were changed, meaning state will be updated but what you see on screen will not be updated.
       const currentMessageList = [...this.state.messages];
+      // find the index of the key you need to update
       const index = currentMessageList.findIndex(
         (item) => item.key === keyToUpdate
       );
+      // remove that item from the current messages and then replace it with the altered childs new state
       currentMessageList.splice(index, 1, { key: data.key, val: data.val() });
+      // update the messages state
+
       this.setState({
         messages: currentMessageList,
       });
     });
   }
 
+  // helper function to alter the input states
   handleChange = (e) => {
     let { name, value } = e.target;
 
     this.setState({ [name]: value });
   };
 
+  // Like the current post by the currrent user
   likeCurrentPost = (e, post) => {
+    // get the item within firebase that we need to update
     const itemToUpdate = databaseRef(
       database,
       DB_MESSAGES_KEY + "/" + post.key
     );
     const updates = {};
+    // increment the liked value in firebase realtime database
     updates["likes"] = post.val.likes + 1;
     return update(itemToUpdate, updates);
   };
 
+  // Allow users to add comments
   handleAddComment = (e, post) => {
+    // get the item within firebase that we need to update
     const itemToUpdate = databaseRef(
       database,
       DB_MESSAGES_KEY + "/" + post.key
     );
     const updates = {};
+    // if the post already has comments include these comments into the array and add the new comment else add this comment to the empty comments array
     if (post.val.comments) {
       updates["comments"] = [
         ...post.val.comments,
@@ -97,18 +110,24 @@ class App extends React.Component {
     return update(itemToUpdate, updates);
   };
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
+  // Write the new message to the firebase realtime database
   writeData = () => {
+    // Get the list target on firebase we are targetting
     const messageListRef = databaseRef(database, DB_MESSAGES_KEY);
+    // Add the new message into the list and get the reference to that new data
     const newMessageRef = push(messageListRef);
 
+    // Get the storage ref for the image we are going to store
     const storageRefInstance = storageRef(
       storage,
       STORAGE_IMAGE_KEY + this.state.fileInputFile.name
     );
 
+    // Upload the image to firebase storage
     uploadBytes(storageRefInstance, this.state.fileInputFile).then(() => {
+      //  When the file has been uploaded use the storage reference to get the url for the uploaded asset
       getDownloadURL(storageRefInstance).then((url) => {
+        // Set this new message into the firebase realtime database
         set(newMessageRef, {
           message: this.state.message,
           date: `${new Date()}`,
@@ -130,16 +149,17 @@ class App extends React.Component {
   };
 
   render() {
-    // Convert messages in state to message JSX elements to render
+    // display all messages
     let messageListItems = this.state.messages.map((message) => (
       <li key={message.key}>
         <h3>{message.val.title}</h3>
+        {/* If the message has an image display the image */}
         {message.val.url ? (
           <img src={message.val.url} alt={message.val.title} />
         ) : null}
         <p>{message.val.message}</p>
         <p>{message.val.date}</p>
-
+        {/* Display the total number of likes */}
         <div className="likes">
           <p>{message.val.likes}</p>
           <button>
@@ -165,6 +185,8 @@ class App extends React.Component {
           Add Comment
         </button>
         <ol>
+          {/* display all of the comments for this post */}
+
           {message.val.comments && message.val.comments.length > 0 ? (
             message.val.comments.map((comment, i) => (
               <li key={i}>
@@ -184,7 +206,6 @@ class App extends React.Component {
           <p>
             Edit <code>src/App.js</code> and save to reload.
           </p>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
           <div className="formInput">
             <label>Title:</label>
             <input

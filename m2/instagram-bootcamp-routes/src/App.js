@@ -15,7 +15,8 @@ import {
   onChildChanged,
 } from "firebase/database";
 
-export const FirebaseContext = createContext(null);
+// Creating a firebase context to share all firebase required methods throughout the application
+export const FirebaseContext = createContext();
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,7 +24,9 @@ function App() {
   const [singlePost, setSinglePost] = useState({});
 
   useEffect(() => {
+    // onAuthStateChanged will return the user information if the user is logged in
     onAuthStateChanged(auth, (user) => {
+      // if the user is logged in then update the current user state and set isLoggedIn to true
       if (user) {
         console.log(user);
         setIsLoggedIn(true);
@@ -35,6 +38,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        {/* Firebase Context Provider contains all the values below, all children of the provider can access these values */}
         <FirebaseContext.Provider
           value={{
             DB_MESSAGES_KEY: "messages",
@@ -47,12 +51,14 @@ function App() {
             onChildChanged: onChildChanged,
           }}
         >
+          {/* This will always show up */}
           <Navigation
             isLoggedIn={isLoggedIn}
             setIsLoggedIn={setIsLoggedIn}
             setUser={setUser}
           />
 
+          {/* Like a switch to onlt show one route dependant on the closest matching URL */}
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route

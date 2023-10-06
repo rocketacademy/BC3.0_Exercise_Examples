@@ -18,19 +18,23 @@ export default class PostComposer extends React.Component {
     };
   }
 
+  // Helper function to help handle the inputs on this component
   handleChange = (e) => {
     let { name, value } = e.target;
     this.setState({ [name]: value });
   };
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
+  // Write the new message to the firebase realtime database
   writeData = () => {
+    // Get the list target on firebase we are targetting
     const messageListRef = this.props.databaseRef(
       this.props.database,
       this.props.DB_MESSAGES_KEY
     );
+    // Add the new message into the list and get the reference to that new data
     const newMessageRef = push(messageListRef);
 
+    // Get the storage ref for the image we are going to store
     const storageRefInstance = storageRef(
       storage,
       this.props.STORAGE_IMAGE_KEY + this.state.fileInputFile.name
@@ -38,9 +42,11 @@ export default class PostComposer extends React.Component {
 
     const username = this.props.user.email;
 
+    // Upload the image to firebase storage
     uploadBytes(storageRefInstance, this.state.fileInputFile).then(() => {
+      //  When the file has been uploaded use the storage reference to get the url for the uploaded asset
       getDownloadURL(storageRefInstance).then((url) => {
-        console.log(url);
+        // Set this new message into the firebase realtime database
         set(newMessageRef, {
           message: this.state.message,
           date: `${new Date()}`,

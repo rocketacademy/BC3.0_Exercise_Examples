@@ -6,13 +6,16 @@ import { useState } from "react";
 export default function Post(props) {
   const [comment, setComment] = useState("");
 
+  // Like the current post by the currrent user
   const likeCurrentPost = (e, post) => {
     const userId = props.user.uid;
+    // get the item within firebase that we need to update
     const itemToUpdate = props.databaseRef(
       props.database,
       props.DB_MESSAGES_KEY + "/" + post.key
     );
     const updates = {};
+    // check to see if the user has liked or not, add the truthy value for this user or toggle the value
     if (!post.val.likes) {
       updates["likes"] = {
         ...post.val.likes,
@@ -27,13 +30,16 @@ export default function Post(props) {
     return update(itemToUpdate, updates);
   };
 
+  // Allow users to add comments
   const handleAddComment = (e, post) => {
+    // get the item within firebase that we need to update
     const itemToUpdate = props.databaseRef(
       props.database,
       props.DB_MESSAGES_KEY + "/" + post.key
     );
     const email = props.user.email;
     const updates = {};
+    // if the post already has comments include these comments into the array and add the new comment else add this comment to the empty comments array
     if (post.val.comments) {
       updates["comments"] = [
         ...post.val.comments,
@@ -49,11 +55,13 @@ export default function Post(props) {
     return update(itemToUpdate, updates);
   };
 
+  // display all messages given as props
   let messageListItems = props.messages.map((message) => (
     <li key={message.key}>
       <h3>
         {message.val.title} - {message.val.poster}
       </h3>
+      {/* If the message has an image display the image */}
       {message.val.url ? (
         <img src={message.val.url} alt={message.val.title} />
       ) : null}
@@ -61,11 +69,13 @@ export default function Post(props) {
       <p>{message.val.date}</p>
       <div className="likes">
         <div>
+          {/* Display the total number of likes */}
           {message.val.likes
             ? Object.values(message.val.likes).filter((item) => item !== false)
                 .length
             : null}
         </div>
+        {/* If the user is logged in allow them to like the post by adding a button */}
         {props.isLoggedIn ? (
           <button>
             <img
@@ -78,6 +88,7 @@ export default function Post(props) {
         ) : null}
       </div>
       <label>Comments:</label> <br />
+      {/* If the user is logged in allow them to add comments  */}
       {props.isLoggedIn ? (
         <>
           <input
