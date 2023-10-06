@@ -6,16 +6,17 @@ export default function SightingCard(props) {
   const [editingComment, setEditingComment] = useState("");
   const [editing, setEditing] = useState(false);
 
+  // Api requiest to like post by sightindId
   const likeSighting = async () => {
     await axios.post(
       `${process.env.REACT_APP_BACKEND_KEY}/sightings/like/${props.sighting.id}/`
     );
-
+    // After we have liked the post go retreive the sightings again.
     props.getSighting();
   };
 
+  // Api requiest to edit comment by comment id
   const editComment = async (comment) => {
-    console.log(comment);
     await axios.put(
       `${process.env.REACT_APP_BACKEND_KEY}/sightings/${comment.id}/comments`,
       {
@@ -23,13 +24,14 @@ export default function SightingCard(props) {
         updatedAt: new Date(),
       }
     );
+    // After we have made the request to edit the comment, we try to get the sighting again to render the updated information
     setEditing(false);
     setEditingComment("");
-    console.log("props", props);
     props.getSighting();
   };
 
   return (
+    // Depending choose class name full dependent on prop passed
     <div className={props.full ? "full" : null}>
       {props.sighting && (
         <div>
@@ -37,6 +39,7 @@ export default function SightingCard(props) {
           <h3>{props.sighting.city}</h3>
           <h4>{props.sighting.locationDescription}</h4>
           <p>Date: {new Date(`${props.sighting.date}`).toLocaleDateString()}</p>
+          {/* If the prop is full then showcase the like button, total likes*/}
           {props.full ? (
             <div>
               <button onClick={likeSighting}>Like</button>
@@ -50,6 +53,7 @@ export default function SightingCard(props) {
 
               <h4>Comments:</h4>
 
+              {/* If the comment is not being edited show case the new comment form, allowing users to add comments */}
               {!editing ? (
                 <div>
                   <label>New Comment:</label>
@@ -60,13 +64,13 @@ export default function SightingCard(props) {
                   />
                   <button onClick={props.sendComment}>Submit</button>
 
+                  {/* display all comments onto the page */}
                   {props.sighting.comments &&
                   props.sighting.comments.length > 0 ? (
                     props.sighting.comments.map((item) => (
                       <div key={item.id}>
                         <p>{item.content}</p>
-                        {/* capture edited comment */}
-
+                        {/* Set editing to true  */}
                         <button
                           onClick={() => {
                             setEditing(true);
@@ -86,6 +90,7 @@ export default function SightingCard(props) {
                   )}
                 </div>
               ) : (
+                // If editing is true render the edit comment component along with all of the information it requires
                 <EditComment
                   editingComment={editingComment}
                   editComment={editComment}

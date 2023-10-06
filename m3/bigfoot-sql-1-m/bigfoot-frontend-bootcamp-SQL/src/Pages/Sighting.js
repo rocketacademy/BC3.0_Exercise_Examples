@@ -7,6 +7,7 @@ function Sighting() {
   const [sighting, setSighting] = useState({});
   const [comment, setComment] = useState("");
 
+  // Api request to create a new commnet
   const sendComment = async () => {
     let data = await axios.post(
       `${process.env.REACT_APP_BACKEND_KEY}/sightings/${params.sightingId}/comments`,
@@ -16,12 +17,11 @@ function Sighting() {
         updatedAt: new Date(),
       }
     );
-
-    console.log(data);
     setComment("");
     getSighting();
   };
 
+  // Api request to delete a comment by its id
   const deleteComment = async (id) => {
     await axios.delete(
       `${process.env.REACT_APP_BACKEND_KEY}/sightings/${id}/comments`
@@ -29,13 +29,14 @@ function Sighting() {
     getSighting();
   };
 
+  // router hook
   const params = useParams();
 
+  // Api request to get a single sighting by id
   const getSighting = async () => {
     let data = await axios.get(
       `${process.env.REACT_APP_BACKEND_KEY}/sightings/${params.sightingId}`
     );
-    console.log("singleSighting", data);
     setSighting(data.data);
   };
 

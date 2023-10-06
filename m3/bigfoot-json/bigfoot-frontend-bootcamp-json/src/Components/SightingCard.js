@@ -1,7 +1,6 @@
-import { useNavigate } from "react-router-dom";
 export default function SightingCard(props) {
-  console.log(props);
   return (
+    // Prop of full or not to display some information or all of the information
     <div className={props.full ? "full" : null}>
       {props.sighting && (
         <div>

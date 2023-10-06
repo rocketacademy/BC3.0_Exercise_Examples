@@ -2,35 +2,35 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useSearchParams } from "react-router-dom";
 import SightingCard from "../Components/SightingCard";
+
 function Sightings(props) {
+  // Define component state
   const [sightings, setSightings] = useState([]);
   const [filter, setFilter] = useState("");
   const [ascending, setAscending] = useState(false);
   const [sortByReportNumber, setSortByReportNumber] = useState(false);
-
   let [searchParams, setSearchParams] = useSearchParams();
 
+  // Get all sighting from database
   const getSightings = async (props) => {
     let data = await axios.get(
       `${process.env.REACT_APP_BACKEND_KEY}/sightings`
     );
-    console.log(data.data);
     setSightings(data.data);
   };
 
+  // Get sightings when the component mounts
   useEffect(() => {
     getSightings();
-    console.log(searchParams);
   }, []);
 
+  // Filter and sort the data dependant on user input
   const copyOfSighting = [...sightings];
-
   const sorted = sortByReportNumber
     ? ascending
       ? copyOfSighting.sort((a, b) => a.REPORT_NUMBER - b.REPORT_NUMBER)
       : copyOfSighting.sort((a, b) => b.REPORT_NUMBER - a.REPORT_NUMBER)
     : sightings;
-
   const filtered = sorted.filter((sighting) =>
     filter ? sighting.YEAR === filter : sighting
   );
@@ -57,6 +57,7 @@ function Sightings(props) {
           placeholder="Search by year"
         />
         <div className="flexCenter">
+          {/* If sightings exist and the array is larger than 0 then show each sighting card with a button to view in more detail */}
           {sightings && sightings.length > 0 ? (
             filtered.map((sighting, index) => {
               return (

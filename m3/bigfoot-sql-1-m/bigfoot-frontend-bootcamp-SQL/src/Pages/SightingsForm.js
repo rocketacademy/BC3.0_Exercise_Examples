@@ -3,21 +3,23 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function SightingForm(props) {
+  // state to handle  the form
   const [locationDescription, setLocationDescription] = useState("");
   const [notes, setNotes] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
-
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+
+  // router hooks
   const navigate = useNavigate();
   const params = useParams();
 
   useEffect(() => {
     if (props.edit) {
+      // API way
       // getSighting();
 
-      // STATE WAY
-      console.log(props);
+      // Prop way
       setLocationDescription(props.sighting.locationDescription);
       setNotes(props.sighting.notes);
       setCity(props.sighting.city);
@@ -26,19 +28,19 @@ export default function SightingForm(props) {
     }
   }, []);
 
-  // API way
+  // API way to set data on editing form
   const getSighting = async () => {
     let data = await axios.get(
       `${process.env.REACT_APP_BACKEND_KEY}/sightings/${params.sightingId}`
     );
-    setLocationDescription(props.sighting.locationDescription);
-    setNotes(props.sighting.notes);
-    setCity(props.sighting.city);
-    setCountry(props.sighting.country);
+    setLocationDescription(data.data.locationDescription);
+    setNotes(data.data.notes);
+    setCity(data.data.city);
+    setCountry(data.data.country);
     setDate(data.data.date.slice(0, 10));
-    console.log(data);
   };
 
+  // Api request to make a new sighting
   const sendSighting = async () => {
     await axios.post(`${process.env.REACT_APP_BACKEND_KEY}/sightings`, {
       locationDescription,
@@ -55,6 +57,7 @@ export default function SightingForm(props) {
     navigate("/sightings");
   };
 
+  // Api request to edit an existing sighting
   const editSighting = async () => {
     await axios.put(
       `${process.env.REACT_APP_BACKEND_KEY}/sightings/${params.sightingId}`,
@@ -110,6 +113,7 @@ export default function SightingForm(props) {
         value={date}
         onChange={(e) => setDate(e.target.value)}
       />
+      {/* Depending on the prop value this component is given, it will either be editing or sending a new sighting */}
       <button onClick={props.edit ? editSighting : sendSighting}>
         {props.edit ? "Edit" : "Submit"}
       </button>

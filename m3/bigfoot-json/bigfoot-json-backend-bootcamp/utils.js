@@ -1,4 +1,4 @@
-const { readFile } = require('fs/promises')
+const { readFile } = require("fs/promises");
 
 const getSightings = async () => {
   // Retrieve sightings.json file contents as string
@@ -7,7 +7,6 @@ const getSightings = async () => {
   return JSON.parse(sightings);
 };
 
-
 module.exports = {
-  getSightings
-}
+  getSightings,
+};
