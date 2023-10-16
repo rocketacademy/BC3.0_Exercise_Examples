@@ -1,4 +1,6 @@
 "use strict";
+// Add intensity to the sightings/ category
+// using underscores so that you can see the differences.
 
 module.exports = {
   async up(queryInterface, Sequelize) {

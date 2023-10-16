@@ -1,3 +1,5 @@
+// Develop a sightings router to handle API requests into /sightings
+
 const express = require("express");
 const router = express.Router();
 
@@ -6,7 +8,7 @@ class SightingsRouter {
     this.controller = controller;
   }
   routes() {
-    // we will insert routes into here later on
+    // Sightings
     router.get("/", this.controller.getAll);
     router.get("/:sightingId", this.controller.getOne);
     router.post("/", this.controller.createOne);

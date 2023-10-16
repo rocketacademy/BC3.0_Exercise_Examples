@@ -1,5 +1,5 @@
+//  Allow users to edit a comment that has been made
 export default function EditComment(props) {
-  console.log(props);
   return (
     <div>
       <label>Edit comment</label>

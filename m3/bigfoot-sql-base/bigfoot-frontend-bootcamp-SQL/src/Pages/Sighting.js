@@ -6,9 +6,10 @@ import SightingCard from "../Components/SightingCard";
 function Sighting() {
   const [sighting, setSighting] = useState({});
 
+  // router hook
   const params = useParams();
-  console.log(params);
 
+  // Api request to get a single sighting by id
   const getSighting = async () => {
     let data = await axios.get(
       `${process.env.REACT_APP_BACKEND_KEY}/sightings/${params.sightingId}`

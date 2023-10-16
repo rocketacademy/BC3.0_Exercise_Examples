@@ -7,11 +7,13 @@ import SightingsForm from "./Pages/SightingsForm";
 import { useState } from "react";
 
 function App() {
+  // handle the state of the sighting that we will edit
   const [sighting, setSighting] = useState(null);
 
   return (
     <div className="App">
       <header className="App-header">
+        {/* Navigation for users */}
         <div>
           <Link to="/sightings">Home</Link>
           <Link to="/new-sighting">New Sighting</Link>
@@ -20,6 +22,7 @@ function App() {
         <h1> Welcome class</h1>
         <img src={logo} className="App-logo" alt="logo" />
 
+        {/* React router setup passing information as props  */}
         <Routes>
           <Route
             path="/sightings"

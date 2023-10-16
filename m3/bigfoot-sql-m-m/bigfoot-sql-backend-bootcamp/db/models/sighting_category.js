@@ -1,3 +1,6 @@
+// Model to get data out of the sighting_category table
+// defined associations
+// tables are made with underscores in migration, notice how we handle that in our model file ( all other models do not use underscored: true )
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {

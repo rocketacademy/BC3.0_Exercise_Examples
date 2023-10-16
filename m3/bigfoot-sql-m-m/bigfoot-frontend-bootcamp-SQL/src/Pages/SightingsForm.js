@@ -4,20 +4,25 @@ import { useNavigate, useParams } from "react-router-dom";
 import Creatable from "react-select/creatable";
 
 export default function SightingForm(props) {
+  // state to handle  the form
   const [locationDescription, setLocationDescription] = useState("");
   const [notes, setNotes] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [options, setOptions] = useState([]);
   const [value, setValue] = useState([]);
-
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+
+  // router hooks
   const navigate = useNavigate();
   const params = useParams();
 
   useEffect(() => {
     if (props.edit) {
-      console.log(props);
+      // API way
+      // getSighting();
+
+      // Prop way
       setLocationDescription(props.sighting.locationDescription);
       setNotes(props.sighting.notes);
       setCity(props.sighting.city);
@@ -43,11 +48,13 @@ export default function SightingForm(props) {
     }
   }, []);
 
+  // React Select code implementationation
   const createOption = (label) => ({
     label,
     value: label.toLowerCase().replace(/\W/g, ""),
   });
 
+  // React Select create a new category int he DB once the user adds it to the form
   const handleCreate = async (inputValue) => {
     const catData = await axios.post(
       `${process.env.REACT_APP_BACKEND_KEY}/categories`,
@@ -55,11 +62,12 @@ export default function SightingForm(props) {
         name: inputValue,
       }
     );
-    console.log(catData);
     const newOption = createOption(inputValue);
     newOption.id = catData.data.id;
     setOptions((prev) => [...prev, newOption]);
   };
+
+  // Get all categories to dynamically add to React Select options
   const getCategories = async () => {
     let data = await axios.get(
       `${process.env.REACT_APP_BACKEND_KEY}/categories`
@@ -80,6 +88,7 @@ export default function SightingForm(props) {
     getCategories();
   }, []);
 
+  // Api request to make a new sighting
   const sendSighting = async () => {
     let data = await axios.post(
       `${process.env.REACT_APP_BACKEND_KEY}/sightings`,
@@ -92,7 +101,6 @@ export default function SightingForm(props) {
       }
     );
     const sightingId = data.data.id;
-
     let formattedCategory = value.map((item) => {
       return {
         categoryId: item.id,
@@ -106,10 +114,10 @@ export default function SightingForm(props) {
     setCountry("");
     setNotes("");
     setDate(new Date().toISOString().slice(0, 10));
-
     navigate("/sightings");
   };
 
+  // Api request to edit an existing sighting
   const editSighting = async () => {
     const data = await axios.put(
       `${process.env.REACT_APP_BACKEND_KEY}/sightings/${params.sightingId}`,
@@ -155,6 +163,7 @@ export default function SightingForm(props) {
     navigate("/sightings");
   };
 
+  // API request to make association between sigthing and category
   const sendCategorySighting = async (categoryArray, sightingId) => {
     categoryArray.forEach(async (item) => {
       await axios.post(
@@ -166,6 +175,7 @@ export default function SightingForm(props) {
     });
   };
 
+  //  Logic to alter the intensity of the weather pheonmenon
   const editIntensity = (e, element, index) => {
     let newElement = { ...element, currentValue: e.target.value };
     let newValueArray = [...value];
@@ -175,6 +185,7 @@ export default function SightingForm(props) {
 
   return (
     <div>
+      {/* React Select */}
       <Creatable
         isClearable
         defaultValue={value}
@@ -186,6 +197,7 @@ export default function SightingForm(props) {
         options={options}
         value={value}
       />
+      {/* If there are current categories, display editable intensities */}
       {value && value.length > 0
         ? value.map((element, index) => {
             return (
@@ -238,6 +250,7 @@ export default function SightingForm(props) {
         value={date}
         onChange={(e) => setDate(e.target.value)}
       />
+      {/* Depending on the prop value this component is given, it will either be editing or sending a new sighting */}
       <button onClick={props.edit ? editSighting : sendSighting}>
         {props.edit ? "Edit" : "Submit"}
       </button>

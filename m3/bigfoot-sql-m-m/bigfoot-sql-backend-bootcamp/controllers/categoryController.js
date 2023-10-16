@@ -1,21 +1,20 @@
 const BaseController = require("./baseController");
 
+// Category controller has extended the base controller and will therefore have a given getAll method.
 class CategoryController extends BaseController {
+  // inject the sightings_category model for eager loading
   constructor(model, sightings_category) {
     super(model);
     this.sightings_category = sightings_category;
   }
 
+  // add a new category into the applicaiton's database
   newCategory = async (req, res) => {
     const category = req.body;
-    console.log(category);
-
     try {
       const data = await this.model.create({
         ...category,
       });
-
-      console.log("response from db", data);
       return res.json(data);
     } catch (err) {
       console.log(err);
@@ -23,14 +22,11 @@ class CategoryController extends BaseController {
     }
   };
 
+  // create a new association within sightings_categories, adding in the intensity of the weather
   addCategory = async (req, res) => {
-    console.log(req.params);
     const sightingId = req.params.id;
     const intensity = req.body.intensity;
     const categoryId = req.body.categoryId;
-
-    console.log(req.body);
-
     try {
       const data = await this.sightings_category.create({
         sightingId: sightingId,
@@ -44,14 +40,12 @@ class CategoryController extends BaseController {
     }
   };
 
+  // Edit a current association's intensity that is recorded in database
   editCategory = async (req, res) => {
     const sightingId = req.params.id;
     const intensity = req.body.intensity;
     const categoryId = req.body.categoryId;
     const intensityId = req.body.sightingCategoryId;
-
-    console.log(req.body);
-
     try {
       const data = await this.sightings_category.update(
         {
@@ -69,8 +63,6 @@ class CategoryController extends BaseController {
       return res.status(400).json({ error: true, msg: err });
     }
   };
-
-  // make an edit category route
 }
 
 module.exports = CategoryController;

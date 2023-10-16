@@ -1,3 +1,6 @@
+// Model to get data out of the likes table
+// defined associations
+// Camel Casing to respect JS syntax
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {

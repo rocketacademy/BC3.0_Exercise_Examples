@@ -1,6 +1,8 @@
 const BaseController = require("./baseController");
 
+// Sightings controller has extended the base controller and will therefore have a given getAll method.
 class SightingsController extends BaseController {
+  // inject the comment, category and like models into this controller for eager loading
   constructor(model, comment, like, category) {
     super(model);
     this.commentModel = comment;
@@ -8,6 +10,7 @@ class SightingsController extends BaseController {
     this.category = category;
   }
 
+  // get all to include comment and category model
   getAll = async (req, res) => {
     try {
       const sightings = await this.model.findAll({
@@ -23,14 +26,13 @@ class SightingsController extends BaseController {
     }
   };
 
-  // Retrieve specific sighting and comments
+  // Retrieve specific sighting with comments, likes and categories
   getOne = async (req, res) => {
     const { sightingId } = req.params;
     try {
       const sighting = await this.model.findByPk(sightingId, {
         include: [this.commentModel, this.category, this.likeModel],
       });
-      console.log("sighting", sighting);
       return res.json(sighting);
     } catch (err) {
       console.log(err);
@@ -38,16 +40,13 @@ class SightingsController extends BaseController {
     }
   };
 
+  // Create a sighting in the DB
   createOne = async (req, res) => {
     const sighting = req.body;
-    console.log(sighting);
-
     try {
       const data = await this.model.create({
         ...sighting,
       });
-
-      console.log("response from db", data);
       return res.json(data);
     } catch (err) {
       console.log(err);
@@ -55,6 +54,7 @@ class SightingsController extends BaseController {
     }
   };
 
+  // Like a sightinging by id.
   likeOne = async (req, res) => {
     const sightingId = req.params.sightingId;
     try {
@@ -69,21 +69,20 @@ class SightingsController extends BaseController {
     }
   };
 
+  // Get likes for a particular sighting
   getLikes = async (req, res) => {
     const sightingId = req.params.sightingId;
     try {
       const data = await this.likeModel.findAll({
         where: { sightingId: sightingId },
       });
-
-      console.log(data);
-
       return res.json(data);
     } catch (err) {
       return res.status(400).json({ error: true, msg: err });
     }
   };
 
+  // Edit a sighting
   editOne = async (req, res) => {
     const sighting = req.body;
     const sightingId = req.params.sightingId;
@@ -104,10 +103,9 @@ class SightingsController extends BaseController {
     }
   };
 
+  // Add a comment to a sighting
   createComment = async (req, res) => {
-    console.log(req.body);
     const comment = req.body;
-    console.log(comment);
     try {
       let data = await this.commentModel.create({
         content: comment.content,
@@ -122,10 +120,9 @@ class SightingsController extends BaseController {
     }
   };
 
+  // Edit a comment assosiated to a sighting
   editComment = async (req, res) => {
-    console.log("editing", req.body);
     const comment = req.body;
-    console.log("comment", comment);
     try {
       let data = await this.commentModel.update(
         {
@@ -147,6 +144,7 @@ class SightingsController extends BaseController {
     }
   };
 
+  // Delete a comment within the database.
   deleteComment = async (req, res) => {
     try {
       let data = await this.commentModel.destroy({

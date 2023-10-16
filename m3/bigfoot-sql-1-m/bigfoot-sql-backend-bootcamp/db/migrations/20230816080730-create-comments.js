@@ -1,4 +1,6 @@
 "use strict";
+// Add comments into the database, a one to many relationshup with comments
+// Camel Casing to respect JS syntax
 
 module.exports = {
   async up(queryInterface, Sequelize) {

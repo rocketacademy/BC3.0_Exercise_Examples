@@ -5,6 +5,7 @@ import SightingCard from "../Components/SightingCard";
 function Sightings(props) {
   const [sightings, setSightings] = useState([]);
 
+  // API call to get the sightings from the backend
   const getSightings = async () => {
     let data = await axios.get(
       `${process.env.REACT_APP_BACKEND_KEY}/sightings`
@@ -13,6 +14,7 @@ function Sightings(props) {
     setSightings(data.data);
   };
 
+  // Setting up navigate hook
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,12 +25,15 @@ function Sightings(props) {
     <div className="App">
       <header className="App-header">
         <div className="flexCenter">
+          {/* if there are sightings and sightings length is greater than 0 then we display each sighting using a sighting card */}
           {sightings && sightings.length > 0 ? (
             sightings.map((sighting) => {
               return (
                 <div className="card" key={sighting.id}>
                   <SightingCard sighting={sighting} />
+                  {/* button to navigate to the single sighting information */}
                   <Link to={`/sighting/${sighting.id}`}>More Details</Link>
+                  {/* button to edit this particular sighting  */}
                   <button
                     onClick={() => {
                       props.setSighting(sighting);

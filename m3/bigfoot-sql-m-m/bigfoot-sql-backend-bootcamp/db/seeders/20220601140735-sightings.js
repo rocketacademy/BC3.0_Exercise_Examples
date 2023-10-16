@@ -1,3 +1,5 @@
+// Develop a new seeder file based off the JSON data that was given in the previous exercise
+// Respect camel casing
 "use strict";
 
 module.exports = {

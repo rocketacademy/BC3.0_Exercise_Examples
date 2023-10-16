@@ -28,7 +28,7 @@ export default function SightingForm(props) {
     }
   }, []);
 
-  // API way to set data on editing form
+  // API way to set data
   const getSighting = async () => {
     let data = await axios.get(
       `${process.env.REACT_APP_BACKEND_KEY}/sightings/${params.sightingId}`

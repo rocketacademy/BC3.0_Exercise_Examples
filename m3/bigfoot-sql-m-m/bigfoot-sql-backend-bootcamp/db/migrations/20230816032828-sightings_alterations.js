@@ -1,4 +1,6 @@
 "use strict";
+// Alter the sightings table to align with exercise, rename columns and add new ones in
+// Camel Casing to respect JS syntax
 
 module.exports = {
   async up(queryInterface, Sequelize) {

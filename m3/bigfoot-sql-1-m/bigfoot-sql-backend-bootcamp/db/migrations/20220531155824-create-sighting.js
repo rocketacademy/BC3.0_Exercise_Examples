@@ -1,3 +1,5 @@
+// Migration to generate the sightings table.
+// Camel Casing to respect JS syntax
 "use strict";
 module.exports = {
   async up(queryInterface, Sequelize) {

@@ -1,5 +1,6 @@
 "use strict";
-
+// Add sighting_category table table - this facilitates the many to many relationship between categories and sighting
+// show case how code works if you dont camel case, check the model for this.
 module.exports = {
   async up(queryInterface, Sequelize) {
     /**

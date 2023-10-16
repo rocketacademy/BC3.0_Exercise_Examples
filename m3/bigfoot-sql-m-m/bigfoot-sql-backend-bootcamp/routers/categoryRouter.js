@@ -1,3 +1,5 @@
+// Develop a categories router to handle API requests into /categories
+
 const express = require("express");
 const router = express.Router();
 
@@ -6,7 +8,6 @@ class CategoryRouter {
     this.controller = controller;
   }
   routes() {
-    // we will insert routes into here later on
     router.get("/", this.controller.getAll);
     router.post("/", this.controller.newCategory);
     router.post("/:id", this.controller.addCategory);

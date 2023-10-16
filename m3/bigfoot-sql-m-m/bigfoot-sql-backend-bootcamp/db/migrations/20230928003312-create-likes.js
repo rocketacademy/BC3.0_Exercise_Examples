@@ -1,4 +1,6 @@
 "use strict";
+// Add likes table - one to many relastionship with sightings
+// Camel Casing to respect JS syntax
 
 module.exports = {
   async up(queryInterface, Sequelize) {

@@ -1,4 +1,6 @@
 "use strict";
+// Develop a new seeder file to generate some comments for the application
+// Respect camel casing
 
 module.exports = {
   async up(queryInterface, Sequelize) {

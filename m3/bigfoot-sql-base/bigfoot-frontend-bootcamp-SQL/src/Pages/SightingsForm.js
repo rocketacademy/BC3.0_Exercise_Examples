@@ -3,12 +3,14 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function SightingForm(props) {
+  // state to handle  the form
   const [locationDescription, setLocationDescription] = useState("");
   const [notes, setNotes] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
-
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+
+  // router hooks
   const navigate = useNavigate();
   const params = useParams();
 
@@ -26,7 +28,7 @@ export default function SightingForm(props) {
     }
   }, []);
 
-  // API way
+  // API way to set data
   const getSighting = async () => {
     let data = await axios.get(
       `${process.env.REACT_APP_BACKEND_KEY}/sightings/${params.sightingId}`
@@ -39,6 +41,7 @@ export default function SightingForm(props) {
     console.log(data);
   };
 
+  // Api request to make a new sighting
   const sendSighting = async () => {
     await axios.post(`${process.env.REACT_APP_BACKEND_KEY}/sightings`, {
       locationDescription,
@@ -55,6 +58,7 @@ export default function SightingForm(props) {
     navigate("/sightings");
   };
 
+  // Api request to edit an existing sighting
   const editSighting = async () => {
     await axios.put(
       `${process.env.REACT_APP_BACKEND_KEY}/sightings/${params.sightingId}`,

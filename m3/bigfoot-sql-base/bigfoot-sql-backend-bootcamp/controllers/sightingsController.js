@@ -1,10 +1,12 @@
 const BaseController = require("./baseController");
 
+// Sightings contorller has extended the base controller and will therefore have a given getAll method.
 class SightingsController extends BaseController {
   constructor(model) {
     super(model);
   }
 
+  // get all replace the baseController
   getAll = async (req, res) => {
     try {
       const sightings = await this.model.findAll({});
@@ -17,7 +19,7 @@ class SightingsController extends BaseController {
     }
   };
 
-  // Retrieve specific sighting and comments
+  // Retrieve specific sighting
   getOne = async (req, res) => {
     const { sightingId } = req.params;
     try {
@@ -28,16 +30,13 @@ class SightingsController extends BaseController {
     }
   };
 
+  // Create a sighting in the DB
   createOne = async (req, res) => {
     const sighting = req.body;
-    console.log(sighting);
-
     try {
       const data = await this.model.create({
         ...sighting,
       });
-
-      console.log("response from db", data);
       return res.json(data);
     } catch (err) {
       console.log(err);
@@ -45,6 +44,7 @@ class SightingsController extends BaseController {
     }
   };
 
+  // Edit a sighting
   editOne = async (req, res) => {
     const sighting = req.body;
     const sightingId = req.params.sightingId;
