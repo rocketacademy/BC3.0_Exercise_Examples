@@ -1,22 +1,30 @@
+// Import Axios
 import axios from "axios";
+// All React Imports
 import React, { useEffect, useState } from "react";
+// React Router Dom imports
 import { Link, useParams } from "react-router-dom";
+// Bootstrap button
 import Button from "react-bootstrap/Button";
+// Bootstrap card
 import Card from "react-bootstrap/Card";
+// Import auth0 hook
 import { useAuth0 } from "@auth0/auth0-react";
-
+// Import constant information
 import { BACKEND_URL } from "../constants.js";
 
+// Show full listing and allow the user to buy if they are logged in.
 const Listing = () => {
   const [listingId, setListingId] = useState();
   const [listing, setListing] = useState({});
   const [userInfo, setUserInfo] = useState({});
 
+  // Setup auth0 so that we can full utilise authentication.
   const { user, getAccessTokenSilently, isAuthenticated, loginWithRedirect } =
     useAuth0();
 
   useEffect(() => {
-    // If there is a listingId, retrieve the listing data
+    // If there is a listingId, then retrieve the listing data
     if (listingId) {
       axios.get(`${BACKEND_URL}/listings/${listingId}`).then((response) => {
         setListing(response.data);
@@ -27,9 +35,8 @@ const Listing = () => {
   }, [listingId]);
 
   useEffect(() => {
+    // If the user is logged in set thier information in state, otherwise, ask them to login
     if (isAuthenticated) {
-      console.log("loggedin");
-      console.log(user);
       setUserInfo(user);
     } else {
       loginWithRedirect();
@@ -52,13 +59,12 @@ const Listing = () => {
     }
   }
 
+  // When the user clicks on the buy button reflect the alteration in the database.
   const handleClick = async () => {
     const accessToken = await getAccessTokenSilently({
       audience: process.env.REACT_APP_AUDIENCE,
       scope: process.env.REACT_APP_SCOPE,
     });
-
-    console.log(accessToken);
     axios
       .put(
         `${BACKEND_URL}/listings/${listingId}/buy`,
@@ -70,7 +76,6 @@ const Listing = () => {
         }
       )
       .then((response) => {
-        console.log(response);
         setListing(response.data);
       });
   };
@@ -81,6 +86,7 @@ const Listing = () => {
       <Card bg="dark">
         <Card.Body>
           {listingDetails}
+          {/* If there is already a buyer, you cannot press the buy button */}
           <Button onClick={handleClick} disabled={listing.BuyerId}>
             Buy
           </Button>

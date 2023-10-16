@@ -1,5 +1,5 @@
+// Seed some information into the database - one user and some listings.
 "use strict";
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert("users", [

@@ -19,21 +19,20 @@ const app = express();
 
 // Enable CORS access to this server
 app.use(cors());
-// app.use(auth());
+
 // Enable reading JSON request bodies
 app.use(express.json());
 
-console.log(process.env);
-
+// Setup backend route protection
 const checkJwt = auth({
   audience: process.env.AUDIENCE,
   issuerBaseURL: process.env.ISSUER,
 });
 
-// initializing Controllers -> note the lowercase for the first word
+// initializing Controllers -> note the lowercase for the first word - inject required models
 const listingsController = new ListingsController(listing, user);
 
-// inittializing Routers
+// inittializing Routers - inject controller and auth function
 const listingsRouter = new ListingsRouter(
   listingsController,
   checkJwt
@@ -41,6 +40,8 @@ const listingsRouter = new ListingsRouter(
 
 // enable and use router
 app.use("/listings", listingsRouter);
+
+// Example private route
 // app.get("/api/private", checkJwt, (req, res) => {
 //   res.json({ message: `Hello ${req.auth.payload.sub}` });
 // });

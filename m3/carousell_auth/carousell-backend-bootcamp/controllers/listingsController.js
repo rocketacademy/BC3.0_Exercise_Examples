@@ -1,13 +1,14 @@
 const BaseController = require("./baseController");
 
+// Listing controller extends the base contorller, so that it contains the getAll method.
 class ListingsController extends BaseController {
+  // inject the userModel as a dependency injection so that we can access the users in association to the listed item.
   constructor(model, userModel) {
     super(model);
     this.userModel = userModel;
   }
 
   /** if a method in this extended class AND the base class has the same name, the one in the extended class will run over the base method */
-  // Create listing. Requires authentication.
   async insertOne(req, res) {
     const {
       title,
@@ -18,14 +19,11 @@ class ListingsController extends BaseController {
       shippingDetails,
       email,
     } = req.body;
-    console.log(email);
     try {
-      // TODO: Get seller email from auth, query Users table for seller ID
-
-      // Create new listing
-
+      // Create a new user is one has not been made - CHECK THIS
       const [user, created] = await this.userModel.findOrCreate({
         where: { email: email },
+        //  Could capture this information from users if you created a form in the frontend and stored information into DB.
         defaults: {
           firstName: "Sam",
           lastName: "O",
@@ -33,11 +31,9 @@ class ListingsController extends BaseController {
         },
       });
 
-      console.log("getting here");
       await created;
-      // if (created) {
-      console.log(user.id);
 
+      // create a new listing with the user associated within.
       const newListing = await this.model.create({
         title: title,
         category: category,
@@ -46,22 +42,16 @@ class ListingsController extends BaseController {
         description: description,
         shippingDetails: shippingDetails,
         buyerId: null,
-        sellerId: user.id, // TODO: Replace with seller ID of authenticated seller
+        sellerId: user.id,
       });
-      console.log(newListing);
 
-      // Respond with new listing
       return res.json(newListing);
-      // } else {
-      //   console.log('FAILED')
-      //   return res.json("Failed");
-      // }
     } catch (err) {
       return res.status(400).json({ error: true, msg: err });
     }
   }
 
-  // Retrieve specific listing. No authentication required.
+  // Retrieve specific listing
   async getOne(req, res) {
     const { listingId } = req.params;
     try {
@@ -72,27 +62,28 @@ class ListingsController extends BaseController {
     }
   }
 
-  // Buy specific listing. Requires authentication.
+  // Buy specific listing
   async buyItem(req, res) {
     const { listingId } = req.params;
-    console.log(req.body);
     const email = req.body.user.email;
 
+    // Find a or create the user withi this email
     const [user, created] = await this.userModel.findOrCreate({
       where: { email: email },
+      //  Could capture this information from users if you created a form in the frontend and stored information into DB.
       defaults: {
-        firstName: "test",
-        lastName: "test",
-        phoneNum: 27300833,
+        firstName: "Sam",
+        lastName: "O",
+        phoneNum: 98377849,
       },
     });
 
     await created;
+
+    // Use this user information add a new listing into the database
     try {
       const data = await this.model.findByPk(listingId);
-
-      // TODO: Get buyer email from auth, query Users table for buyer ID
-      await data.update({ buyerId: user.id }); // TODO: Replace with buyer ID of authenticated buyer
+      await data.update({ buyerId: user.id });
 
       // Respond to acknowledge update
       return res.json(data);

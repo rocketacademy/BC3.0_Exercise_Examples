@@ -1,17 +1,21 @@
+// Import Axios
 import axios from "axios";
+// All React Imports
 import React, { useEffect, useState } from "react";
+// React Router Dom Imports
 import { Link } from "react-router-dom";
 
+// Custom Component import
 import ListingPreview from "./ListingPreview";
+// Get the constant information
 import { BACKEND_URL } from "../constants.js";
 
+// Component that will go and get the listings on load, then it will display the items on using the ListingPreview component.
 const ListingPreviewList = () => {
   const [listings, setListings] = useState([]);
 
   useEffect(() => {
-    console.log("Listing Preview UE");
     axios.get(`${BACKEND_URL}/listings`).then((response) => {
-      console.log(response.data);
       setListings(response.data);
     });
     // Only run this effect on component mount

@@ -1,3 +1,5 @@
+// Create the users table
+// whole exercise done with underscores as a full example.
 "use strict";
 module.exports = {
   async up(queryInterface, Sequelize) {

@@ -1,3 +1,4 @@
+// Router to handle the /listings route
 const express = require("express");
 const router = express.Router();
 
@@ -7,8 +8,6 @@ class ListingsRouter {
     this.auth = auth;
   }
   routes() {
-    console.log(this.auth);
-    // we will insert routes into here later on
     router.get("/", this.controller.getAll.bind(this.controller));
     router.post(
       "/",
